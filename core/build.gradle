@@ -1,0 +1,41 @@
+description = 'Protocol'
+
+apply plugin: 'application'
+
+version = '1.0'
+
+mainClassName = 'org.cddb.server.http.HttpServer'
+applicationDefaultJvmArgs = ["-Duser.timezone=UTC", "-Duser.language=en", "-Duser.country=US"]
+//run.args = ['server', 'conf/management-service-local.yml']
+
+ScalaCompileOptions.metaClass.daemonServer = true
+ScalaCompileOptions.metaClass.fork = true
+ScalaCompileOptions.metaClass.useAnt = false
+ScalaCompileOptions.metaClass.useCompileDaemon = false
+
+
+dependencies {
+
+    compile 'io.circe:circe-core_2.11:0.6.1'
+    compile 'io.circe:circe-parser_2.11:0.6.1'
+    compile 'io.circe:circe-generic_2.11:0.6.1'
+    compile 'io.circe:circe-literal_2.11:0.6.1'
+    compile 'com.typesafe.akka:akka-actor_2.11:2.5.3'
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizard_version
+    compile group: 'io.dropwizard', name: 'dropwizard-jdbi', version: dropwizard_version
+    compile group: 'io.dropwizard', name: 'dropwizard-client', version: dropwizard_version
+
+    testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: dropwizard_version
+    testCompile 'com.typesafe.akka:akka-testkit_2.11:2.5.3'
+    testCompile 'junit:junit:4.12'
+}
+
+/**
+ "org.http4s" %% "http4s-circe" % http4sVersion,
+ // Optional for auto-derivation of JSON codecs
+ "io.circe" %% "circe-generic" % "0.6.1",
+ // Optional for string interpolation to JSON model
+ "io.circe" %% "circe-literal" % "0.6.1"
+
+ * */
+

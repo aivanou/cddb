@@ -1,0 +1,37 @@
+description = 'Protocol'
+
+apply plugin: 'application'
+apply plugin: 'com.google.protobuf'
+
+mainClassName = 'org.cddb.Main'
+applicationDefaultJvmArgs = ["-Duser.timezone=UTC", "-Duser.language=en", "-Duser.country=US"]
+//run.args = ['server', 'conf/management-service-local.yml']
+
+dependencies {
+    compile 'com.google.protobuf:protobuf-java:3.3.0'
+    compile 'io.grpc:grpc-stub:1.4.0'
+    compile 'io.grpc:grpc-protobuf:1.4.0'
+    compile 'io.netty:netty-all:4.1.12.Final'
+
+    testCompile 'junit:junit:4.12'
+}
+
+protobuf {
+    protoc {
+        // The version of protoc must match protobuf-java. If you don't depend on
+        // protobuf-java directly, you will be transitively depending on the
+        // protobuf-java version that grpc depends on.
+        artifact = "com.google.protobuf:protoc:3.3.0"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.4.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+    generatedFilesBaseDir = "$projectDir/src/generated"
+}

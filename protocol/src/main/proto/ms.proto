@@ -1,0 +1,30 @@
+// -*- c-basic-offset: 2; -*-
+syntax = "proto3";
+
+option java_package = "org.cddb.protocol.internal";
+option java_outer_classname = "Protocol";
+
+message Locale {
+    // An ISO 639 alpha-2 language code
+    string code = 1;
+    // Full language name
+    string name = 2;
+}
+
+
+
+// The greeting service definition.
+service Greeter {
+    // Sends a greeting
+    rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+    string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+    string message = 1;
+}

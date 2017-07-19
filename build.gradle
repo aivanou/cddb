@@ -1,0 +1,59 @@
+apply plugin: 'maven'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath group: "com.cinnober.gradle", name: "semver-git", version: "2.2.3"
+        classpath group: 'com.google.protobuf', name: 'protobuf-java', version: '3.3.0'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.1'
+    }
+}
+
+
+allprojects {
+    group = 'org.cddb'
+    apply plugin: 'com.cinnober.gradle.semver-git'
+}
+
+subprojects {
+    apply plugin: 'maven'
+    apply plugin: 'java'
+    apply plugin: 'scala'
+
+    sourceCompatibility = '1.8'
+
+    ext {
+        protobuf_version = '3.3.0'
+        dropwizard_version = '1.1.2'
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs 'src/generated/main/grpc'
+                srcDirs 'src/generated/main/java'
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        compile 'org.scala-lang:scala-library:2.11.2'
+
+        testCompile 'org.scalatest:scalatest_2.11:3.0.3'
+    }
+
+}
