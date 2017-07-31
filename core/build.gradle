@@ -1,6 +1,8 @@
 description = 'Protocol'
 
 apply plugin: 'application'
+apply plugin: 'com.google.protobuf'
+apply plugin: "com.github.maiflai.scalatest"
 
 version = '1.0'
 
@@ -20,7 +22,11 @@ dependencies {
     compile 'io.circe:circe-parser_2.11:0.6.1'
     compile 'io.circe:circe-generic_2.11:0.6.1'
     compile 'io.circe:circe-literal_2.11:0.6.1'
+
+    compile 'com.trueaccord.scalapb:compilerplugin_2.11:0.6.0'
+
     compile 'com.typesafe.akka:akka-actor_2.11:2.5.3'
+
     compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizard_version
     compile group: 'io.dropwizard', name: 'dropwizard-jdbi', version: dropwizard_version
     compile group: 'io.dropwizard', name: 'dropwizard-client', version: dropwizard_version
@@ -30,12 +36,22 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-/**
- "org.http4s" %% "http4s-circe" % http4sVersion,
- // Optional for auto-derivation of JSON codecs
- "io.circe" %% "circe-generic" % "0.6.1",
- // Optional for string interpolation to JSON model
- "io.circe" %% "circe-literal" % "0.6.1"
-
- * */
-
+protobuf {
+    protoc {
+        // The version of protoc must match protobuf-java. If you don't depend on
+        // protobuf-java directly, you will be transitively depending on the
+        // protobuf-java version that grpc depends on.
+        artifact = "com.google.protobuf:protoc:3.3.0"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.4.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+    generatedFilesBaseDir = "$projectDir/src/generated"
+}
