@@ -20,8 +20,8 @@ class Receiver(master: ActorRef) extends Actor {
 
   private val waitingForResponse = new mutable.HashMap[String, AsyncResponse]()
 
-  implicit val fooDecoder: Decoder[StoreObject] = deriveDecoder[StoreObject]
-  implicit val fooEncoder: Encoder[StoreObject] = deriveEncoder[StoreObject]
+  implicit val storeDecoder: Decoder[StoreObject] = deriveDecoder[StoreObject]
+  implicit val storeEncoder: Encoder[StoreObject] = deriveEncoder[StoreObject]
 
   def receive = {
     case Init() =>
@@ -44,7 +44,7 @@ class Receiver(master: ActorRef) extends Actor {
     }
     case RetrieveResponse(key: String, obj: Option[StoreObject]) => waitingForResponse.remove(key) match {
       case Some(response) => obj match {
-        case Some(out) => response.resume(fooEncoder.apply(out).toString())
+        case Some(out) => response.resume(storeEncoder(out).toString())
         case None => response.resume(s"Not found: $key")
       }
       case None =>
@@ -52,7 +52,7 @@ class Receiver(master: ActorRef) extends Actor {
     }
     case DeleteResponse(key: String, obj: Option[StoreObject]) => waitingForResponse.remove(key) match {
       case Some(response) => obj match {
-        case Some(out) => response.resume(fooEncoder.apply(out).toString())
+        case Some(out) => response.resume(storeEncoder(out).toString())
         case None => response.resume(s"Not found: $key")
       }
       case None =>
