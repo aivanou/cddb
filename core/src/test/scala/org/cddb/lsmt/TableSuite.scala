@@ -1,79 +1,99 @@
 package org.cddb.lsmt
 
+import java.io.File
 import java.util.UUID
 
+import org.cddb.io.Config
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FunSuite}
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class TableSuite extends FunSuite {
+abstract class TableSuite extends FunSuite
+  with BeforeAndAfterEach
+  with BeforeAndAfterAll {
 
-  val metadata = TableMetadata(100, 0.8, 20)
+  val storageDir = "./.temp/data"
 
-  test("treeTable read/insert single value should not produce errors") {
-    val treeTable = TreeTable(metadata)
-    val rec1 = randomRec()
-    treeTable.append(rec1)
-    assert(treeTable.size == 1)
-    val out1 = treeTable.read(rec1.key)
-    assert(out1.isInstanceOf[Some[Record]])
-    assert(out1.get.value.equals(rec1.value))
-  }
+  val config = Config(storageDir, "index.dat", TableMetadata(2000, 0.7, 1500))
 
-  test("treeTable read/insert many values") {
-    val treeTable = TreeTable(metadata)
 
-  }
-
-  test("treeTable read/insert to SSTable") {
-    val treeTable = TreeTable(metadata)
-    (0 until 50).foreach(_ => treeTable.append(randomRec()))
-    assert(treeTable.size == 50)
-    val sstable = treeTable.persistPart
-    assert(treeTable.size == 30)
-    assert(sstable.size == 20)
-    val tm = SSTableManager()
-    val outSStable1 = SSTable.deserialize(SSTable.serialize(sstable))
-    assert(outSStable1.get.size == 20)
-  }
-
-  test("SSTable split should produce two tables") {
-    val mn = SSTableManager()
-    val sstable = randomSSTable(101)
-    val (t1, t2) = mn.split(sstable)
-    assert(t1.size == sstable.size / 2)
-    assert(t2.size == (sstable.size - sstable.size / 2))
-    for (ind <- 0 until t1.size) {
-      assert(sstable.get(ind) == t1.get(ind))
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    val dir = new File(storageDir)
+    if (dir.exists()) {
+      val tableManager = SSTableManager()
+      val indexHandler = new DataIndexHandler(config)
+      val dl = new DiskLevel(config, tableManager, indexHandler)
+      dl.destroy()
+      dir.delete()
     }
-    for (ind <- 0 until t2.size) {
-      assert(sstable.get(t1.size + ind) == t2.get(ind))
+    dir.mkdirs()
+  }
+
+  protected override def afterAll(): Unit = {
+    super.afterAll()
+    val dir = new File(storageDir)
+    if (dir.exists()) {
+      val tableManager = SSTableManager()
+      val indexHandler = new DataIndexHandler(config)
+      val dl = new DiskLevel(config, tableManager, indexHandler)
+      dl.destroy()
+      dir.delete()
     }
   }
 
-  test("SSTable merge should merge two tables") {
-    val mn = SSTableManager()
-    val t1 = randomSSTable(101)
-    val t2 = randomSSTable(201)
-    val res = mn.merge(t1, t2)
-    assert(res.size == t1.size + t2.size)
-    for (ind <- 1 until res.size) {
-      val (crec, prec) = (res.get(ind), res.get(ind - 1))
-      assert(crec.key.compareTo(prec.key) >= 0)
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    val dir = new File(storageDir)
+    if (dir.exists()) {
+      val tableManager = SSTableManager()
+      val indexHandler = new DataIndexHandler(config)
+      val dl = new DiskLevel(config, tableManager, indexHandler)
+      dl.destroy()
+      dir.delete()
+    }
+    dir.mkdirs()
+  }
+
+  override protected def afterEach(): Unit = {
+    super.afterEach()
+    val dir = new File(storageDir)
+    if (dir.exists()) {
+      val tableManager = SSTableManager()
+      val indexHandler = new DataIndexHandler(config)
+      val dl = new DiskLevel(config, tableManager, indexHandler)
+      dl.destroy()
+      dir.delete()
     }
   }
 
-  def randomSSTable(size: Int) = randomTreeTable(size).persistPart
 
-  def randomTreeTable(size: Int) = {
+  val defaultMetadata = TableMetadata(100, 0.8, 20)
+
+  val rng = new java.util.Random(System.nanoTime())
+
+  val stableRng = new java.util.Random(100)
+
+  def randomSSTable(size: Int, recFunc: () => Record) = randomTreeTable(size, recFunc).persistPart
+
+  def randomTreeTable(size: Int, recFunc: () => Record) = {
     val tt = TreeTable(TableMetadata(size, 1.0, size))
-    (0 until size).foreach(_ => tt.append(randomRec()))
+    (0 until size).foreach(_ => tt.append(recFunc()))
     tt
   }
 
-  def randomRec(): Record = Record(rstring(), rstring(), rstring(), System.nanoTime())
+  def randomRec(): Record = genRec(rstring, 100000)
 
-  def rstring(): String = UUID.randomUUID().toString
+  def simRandomRec(): Record = genRec(rstring, 100)
+
+  def randomUniqueRec(): Record = genRec(ustring, 0)
+
+  def genRec(rstring: (Int) => String, msize: Int): Record =
+    Record(rstring(msize), rstring(msize), rstring(msize), System.nanoTime())
+
+  def ustring(msize: Int): String = UUID.randomUUID().toString
+
+  def rstring(msize: Int): String = rng.nextInt(msize).toString
 
 }
