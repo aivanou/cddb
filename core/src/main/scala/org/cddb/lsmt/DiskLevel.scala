@@ -4,17 +4,35 @@ import java.util.UUID
 
 import org.cddb.io.{Config, DiskBlock}
 
-import scala.collection._
+import scala.collection.mutable
 
 case class Range(from: String, to: String, creationTimestamp: Long)
 
-class DiskLevel(tableManager: SSTableManager, indexHandler: DataIndexHandler) {
-
-  val config = Config("/Users/aliaksandrivanou/temp/data", "index.dat")
-
-  val maxSSTableSize = 1000
+class DiskLevel(config: Config, tableManager: SSTableManager, indexHandler: DataIndexHandler, maxSSTableSize: Int = 1000) {
 
   private var ranges = indexHandler.readIndex()
+
+  def read(key: String): Option[Record] = {
+    getBlock(key) match {
+      case Some(block) => block.load() match {
+        case Some(table) => table.read(key)
+        case None => None
+      }
+      case None => None
+    }
+  }
+
+  private def getBlock(key: String): Option[DiskBlock[SSTable]] =
+    ranges.find {
+      case (range, block) => inBetween(range, key)
+    } match {
+      case Some((range, block)) => Some(block)
+      case None => None
+    }
+
+  private def inBetween(r: Range, key: String): Boolean =
+    r.from.compareTo(key) <= 0 && r.to.compareTo(key) >= 0
+
 
   /**
     *
@@ -26,7 +44,7 @@ class DiskLevel(tableManager: SSTableManager, indexHandler: DataIndexHandler) {
     val newTables = mutable.ListBuffer[(Range, SSTable)]()
     val it = ranges.iterator
     if (it.isEmpty) {
-      newTables += ((getRange(table), table))
+      addNewTable(newTables, getRange(table), table)
     } else {
       while (it.nonEmpty && lInd < table.size) {
         val (range, block) = it.next
@@ -37,13 +55,7 @@ class DiskLevel(tableManager: SSTableManager, indexHandler: DataIndexHandler) {
           case Some(ind) =>
             cleanupBlocks += ((range, block))
             val (newRange, newSSTable) = merge(block, range, table, lInd, ind)
-            if (newSSTable.size >= maxSSTableSize) {
-              val ((lrange, ltable), (rrange, rtable)) = split(newRange, newSSTable)
-              newTables += ((lrange, ltable))
-              newTables += ((rrange, rtable))
-            } else {
-              newTables += ((newRange, newSSTable))
-            }
+            addNewTable(newTables, newRange, newSSTable)
             lInd = ind + 1
           case None =>
         }
@@ -62,6 +74,13 @@ class DiskLevel(tableManager: SSTableManager, indexHandler: DataIndexHandler) {
     indexHandler.writeIndex(ranges)
   }
 
+  def addNewTable(newTables: mutable.ListBuffer[(Range, SSTable)], range: Range, table: SSTable): Unit = {
+    val lst = recursiveSplit(range, table)
+    for (p <- lst) {
+      newTables += p
+    }
+  }
+
   def cleanAndClose(): Unit = {
     for ((range, block) <- ranges) {
       block.cleanAndClose()
@@ -76,7 +95,16 @@ class DiskLevel(tableManager: SSTableManager, indexHandler: DataIndexHandler) {
     indexHandler.destroy()
   }
 
-  def split(range: Range, table: SSTable): ((Range, SSTable), (Range, SSTable)) = {
+  private def recursiveSplit(range: Range, table: SSTable): List[(Range, SSTable)] = {
+    if (table.size <= maxSSTableSize) {
+      List((range, table))
+    } else {
+      val ((lrange, ltable), (rrange, rtable)) = split(range, table)
+      recursiveSplit(lrange, ltable) ::: recursiveSplit(rrange, rtable)
+    }
+  }
+
+  private def split(range: Range, table: SSTable): ((Range, SSTable), (Range, SSTable)) = {
     val (ltable, rtable) = tableManager.split(table)
     ((getRange(ltable), ltable), (getRange(rtable), rtable))
   }
@@ -150,7 +178,7 @@ class DiskLevel(tableManager: SSTableManager, indexHandler: DataIndexHandler) {
 
 object DiskLevel {
 
-  def apply(tableManager: SSTableManager, indexHandler: DataIndexHandler): DiskLevel =
-    new DiskLevel(tableManager, indexHandler)
+  def apply(config: Config, tableManager: SSTableManager, indexHandler: DataIndexHandler): DiskLevel =
+    new DiskLevel(config, tableManager, indexHandler)
 
 }

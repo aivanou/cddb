@@ -9,13 +9,15 @@ class SSTable(private[lsmt] val records: Array[Record], offset: Int, nels: Int) 
 
   import SSTable._
 
-  private[lsmt] val index = mutable.HashMap[String, Int]()
+  private[lsmt] val index = init()
 
-  private def init(): Unit = {
+  private def init(): mutable.HashMap[String, Int] = {
+    val intMap = mutable.HashMap[String, Int]()
     //TODO check that records.size not greater than nels
     for (ind <- offset until (offset + nels)) {
-      index.put(records(ind).key, ind)
+      intMap.put(records(ind).key, ind)
     }
+    intMap
   }
 
   def size: Int = nels
@@ -23,6 +25,10 @@ class SSTable(private[lsmt] val records: Array[Record], offset: Int, nels: Int) 
   def get(ind: Int): Record = records(offset + ind)
 
   def findIndex(key: String): Option[Int] = index.get(key)
+
+  def splitEqual(): (SSTable, SSTable) = {
+    (SSTable.partial(records, offset, nels / 2), SSTable.partial(records, offset + nels / 2, nels - nels / 2))
+  }
 
   def read(key: String): Option[Record] = {
     findIndex(key) match {
@@ -55,6 +61,10 @@ object SSTable extends Serializer[SSTable] {
 
   def apply(records: Array[Record]) = {
     new SSTable(records, 0, records.length)
+  }
+
+  def withSize(records: Array[Record], size: Int) = {
+    new SSTable(records, 0, size)
   }
 
   def partial(records: Array[Record], offset: Int, nels: Int) = new SSTable(records, offset, nels)

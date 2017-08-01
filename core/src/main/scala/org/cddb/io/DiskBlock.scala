@@ -4,11 +4,11 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.util.UUID
 
-import org.cddb.lsmt.Serializer
+import org.cddb.lsmt.{Serializer, TableMetadata}
 
 import scala.io.Source
 
-case class Config(storagePath: String, dataIndex: String)
+case class Config(storagePath: String, dataIndex: String, tm: TableMetadata)
 
 class DiskBlock[T](config: Config, serializer: Serializer[T], blockId: String) {
 
@@ -19,6 +19,10 @@ class DiskBlock[T](config: Config, serializer: Serializer[T], blockId: String) {
   private val fm = init()
 
   private def init(): FileManager = {
+    val dir = new File(config.storagePath)
+    if (!dir.exists()) {
+      dir.mkdirs()
+    }
     val file = new File(filePath)
     if (!file.exists()) {
       file.createNewFile()

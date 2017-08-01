@@ -38,6 +38,8 @@ class DataIndexHandler(config: Config) {
 
   def destroy(): Unit = {
     indexBlock.destroy()
+    //    val dir = new File(config.storagePath)
+    //    dir.deleteOnExit()
   }
 
   def cleanAndClose(): Unit = {

@@ -6,9 +6,19 @@ class TreeTable(metadata: TableMetadata) extends Table {
 
   private var data = immutable.TreeMap[String, Record]()
 
-  def append(record: Record): Result = {
-    data = data + ((record.key, record))
+  def append(newRecord: Record): Result = {
+    data = data.get(newRecord.key) match {
+      case Some(tableRec) =>
+        data + ((tableRec.key, resolve(tableRec, newRecord)))
+      case None =>
+        data + ((newRecord.key, newRecord))
+    }
     Result()
+  }
+
+  private def resolve(tableRecord: Record, newRecord: Record): Record = {
+    if (tableRecord.timestamp > newRecord.timestamp) tableRecord
+    else newRecord
   }
 
   def read(key: String): Option[Record] = {

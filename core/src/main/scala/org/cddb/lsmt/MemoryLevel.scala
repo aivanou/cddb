@@ -1,20 +1,30 @@
 package org.cddb.lsmt
 
-class MemoryLevel(innerLevel: DiskLevel, hf: String => Long) {
+import org.cddb.io.Config
 
-  private val treeTable: TreeTable = TreeTable(TableMetadata(500, 0.4, 300))
+class MemoryLevel(config: Config, innerLevel: DiskLevel) {
+
+  private val treeTable: TreeTable = TreeTable(config.tm)
 
 
   def append(record: Record): Result = {
     treeTable.append(record)
-
+    if (passedThreshold()) {
+      propagate(treeTable.persistPart)
+    }
+    Result()
   }
+
+  def propagate(table: SSTable): Unit = {
+    innerLevel.scatter(table)
+  }
+
+  def passedThreshold(): Boolean = treeTable.size >= config.tm.maxSize * config.tm.softThreshold
 
   def read(key: String): Option[Record] = treeTable.read(key)
 
 }
 
 object MemoryLevel {
-  def main(args: Array[String]): Unit = {
-  }
+  def apply(config: Config, innerLevel: DiskLevel): MemoryLevel = new MemoryLevel(config, innerLevel)
 }

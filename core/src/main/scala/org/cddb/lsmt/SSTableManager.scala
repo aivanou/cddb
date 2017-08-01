@@ -14,7 +14,13 @@ class SSTableManager() {
     val records = new Array[Record](nels1 + nels2)
     while (t1Ind < nels1 && t2Ind < nels2) {
       val (rec1, rec2) = (t1.get(offset1 + t1Ind), t2.get(offset2 + t2Ind))
-      if (rec1.key.compareTo(rec2.key) > 0) {
+      val cmp = rec1.key.compareTo(rec2.key)
+      if (cmp == 0) {
+        records(recInd) = resolutionStrategy(rec1, rec2)
+        t1Ind += 1
+        t2Ind += 1
+      }
+      else if (cmp > 0) {
         records(recInd) = rec2
         t2Ind += 1
       } else {
@@ -33,14 +39,18 @@ class SSTableManager() {
       t2Ind += 1
       recInd += 1
     }
-    SSTable(records)
+    SSTable.withSize(records, recInd)
+  }
+
+  def resolutionStrategy(r1: Record, r2: Record): Record = {
+    if (r1.timestamp > r2.timestamp) r1
+    else r2
   }
 
   def split(table: SSTable): (SSTable, SSTable) = {
-    val splitIndex = table.size / 2
-    (SSTable.partial(table.records, 0, splitIndex), SSTable.partial(table.records, splitIndex, table.size - splitIndex))
+    table.splitEqual()
   }
-  
+
 }
 
 
