@@ -4,21 +4,19 @@ syntax = "proto3";
 option java_package = "org.cddb.lsmt.internal";
 option java_outer_classname = "TableSerializer";
 
-message IndexRecord {
+message Pointer {
 
     string key = 1;
 
-    int64 offset = 2;
+    int32 offset = 2;
+
+    int32 length = 3;
 
 }
 
-message Index {
+message SSTableIndex {
 
-    string minKey = 1;
-
-    string maxKey = 2;
-
-    repeated IndexRecord records = 3;
+    repeated Pointer records = 3;
 
 }
 
@@ -36,13 +34,14 @@ message Record {
 
 message SSTable {
 
-    Index index = 1;
+    SSTableIndex index = 1;
 
     repeated Record records = 2;
 
 }
 
 message Metadata {
+
     string from = 1;
 
     string to = 2;
@@ -50,8 +49,11 @@ message Metadata {
     string blockId = 3;
 
     int64 timestamp = 4;
+
 }
 
 message DataIndex {
+
     repeated Metadata indices = 1;
+
 }

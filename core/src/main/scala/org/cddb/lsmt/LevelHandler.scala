@@ -2,16 +2,11 @@ package org.cddb.lsmt
 
 import org.cddb.io.Config
 
-case class TableMetadata(maxSize: Int, softThreshold: Double, persistSize: Int)
+case class TableMetadata(maxSize: Int)
 
 case class Result()
 
 case class Record(key: String, value: String, status: String, timestamp: Long)
-
-case class IndexRecord(key: String, offset: Long)
-
-case class Index(records: List[IndexRecord])
-
 
 class LevelHandler(memoryLevel: MemoryLevel, diskLevel: DiskLevel) {
 
@@ -20,10 +15,13 @@ class LevelHandler(memoryLevel: MemoryLevel, diskLevel: DiskLevel) {
   }
 
   def read(key: String): Option[Record] = {
-    memoryLevel.read(key) match {
-      case Some(ans) => Some(ans)
-      case None => diskLevel.read(key)
-    }
+    None
+  }
+
+  def cleanAndClose(): Unit = {
+  }
+
+  def destroy(): Unit = {
   }
 
 }
@@ -37,13 +35,6 @@ object LevelHandler {
     val diskLevel = DiskLevel(config, sstableManager, indexHandler)
     val memoryLevel = MemoryLevel(config, diskLevel)
     new LevelHandler(memoryLevel, diskLevel)
-  }
-
-}
-
-object LSMT {
-  def main(args: Array[String]): Unit = {
-
   }
 
 }

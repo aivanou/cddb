@@ -15,7 +15,7 @@ class HttpServer extends Application[HttpServerConf] {
   override def run(conf: HttpServerConf, env: Environment): Unit = {
     val conf = ConfigFactory.parseFile(new File("conf/akka.conf"))
     val system = ActorSystem("test", conf)
-    val lsmtConfig = Config("/Users/aliaksandrivanou/temp/data", "index.dat", TableMetadata(500, 0.4, 300))
+    val lsmtConfig = Config("/Users/aliaksandrivanou/temp/data", "index.dat", TableMetadata(500))
     val internalHandler = LevelHandler(lsmtConfig)
     val worker = (name: String) => system.actorOf(Props(new Worker(new LsmtStore(internalHandler), name)), name)
     val distributor = new Distributor(worker)

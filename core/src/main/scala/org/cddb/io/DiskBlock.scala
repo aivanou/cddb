@@ -14,8 +14,6 @@ class DiskBlock[T](config: Config, serializer: Serializer[T], blockId: String) {
 
   private val filePath = config.storagePath + "/" + blockId
 
-  private var innerObject: Option[T] = None
-
   private val fm = init()
 
   private def init(): FileManager = {
@@ -30,32 +28,20 @@ class DiskBlock[T](config: Config, serializer: Serializer[T], blockId: String) {
     FileManager(filePath)
   }
 
-  def getId(): String = blockId
+  def getId: String = blockId
 
-  def load(): Option[T] = {
-    innerObject match {
-      case Some(t) => innerObject
-      case None => readFromDisk()
-    }
-  }
+  def load(): Option[T] = readFromDisk()
 
-  def save(tbl: T): Unit = {
-    innerObject match {
-      case Some(_) =>
-      case None =>
-        writeTodisk(tbl)
-        innerObject = Some(tbl)
-    }
-  }
+  def save(obj: T): Unit = writeToDisk(obj)
 
   def readFromDisk(): Option[T] = {
     val bytes = fm.readAll()
     serializer.deserialize(bytes.array())
   }
 
-  def writeTodisk(t: T): Unit = {
+  def writeToDisk(t: T): Unit = {
     val bytes = ByteBuffer.wrap(serializer.serialize(t))
-    fm.writeAll(bytes)
+    fm.writeAtStart(bytes)
   }
 
   def destroy(): Unit = {

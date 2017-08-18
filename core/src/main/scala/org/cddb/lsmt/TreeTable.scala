@@ -1,20 +1,25 @@
 package org.cddb.lsmt
 
-import scala.collection.immutable
+import scala.collection._
 
+/**
+  * The data that is stored in memory.(first level)
+  *
+  * @param metadata
+  */
 class TreeTable(metadata: TableMetadata) extends Table {
 
   private var data = immutable.TreeMap[String, Record]()
 
   def append(newRecord: Record): Result = {
     data = data.get(newRecord.key) match {
-      case Some(tableRec) =>
-        data + ((tableRec.key, resolve(tableRec, newRecord)))
-      case None =>
-        data + ((newRecord.key, newRecord))
+      case Some(tableRecord) => data + ((newRecord.key, resolve(tableRecord, newRecord)))
+      case None => data + ((newRecord.key, newRecord))
     }
     Result()
   }
+
+  def isFull: Boolean = data.size == metadata.maxSize
 
   private def resolve(tableRecord: Record, newRecord: Record): Record = {
     if (tableRecord.timestamp > newRecord.timestamp) tableRecord
@@ -22,27 +27,16 @@ class TreeTable(metadata: TableMetadata) extends Table {
   }
 
   def read(key: String): Option[Record] = {
-    data.get(key)
+    val res = data.get(key)
+    Option(res)
   }
 
   def size: Int = data.size
 
-  def persistPart: SSTable = {
-    //lock
-
-    def gather(): Array[Record] = {
-      val persistSize = Math.min(metadata.persistSize, data.size)
-      val arr = new Array[Record](persistSize)
-      for (i <- 0 until persistSize) {
-        val rec = data.head._2
-        data = data - rec.key
-        arr(i) = rec
-      }
-      arr
-    }
-    SSTable(gather())
-
-    //unlock
+  def persist: SSTable = {
+    val recs = data
+    data = immutable.TreeMap[String, Record]()
+    new MemorySSTable(recs)
   }
 
 }

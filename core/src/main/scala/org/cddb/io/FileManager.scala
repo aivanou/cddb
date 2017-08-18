@@ -1,6 +1,6 @@
 package org.cddb.io
 
-import java.io.RandomAccessFile
+import java.io.{File, RandomAccessFile}
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 
@@ -12,6 +12,12 @@ class FileManager(private val path: String) {
     new RandomAccessFile(path, "rw")
   }
 
+  def setPosition(pos: Int): Unit = {
+    fl.seek(pos)
+  }
+
+  def reset(): Unit = setPosition(0)
+
   def readAll(): ByteBuffer = {
     val channel = fl.getChannel.position(0)
     readInt(channel) match {
@@ -21,11 +27,35 @@ class FileManager(private val path: String) {
         if (bytesRead != size) {
           ByteBuffer.allocate(0)
         } else {
+          data.flip()
           data
         }
       case None => ByteBuffer.allocate(0)
     }
   }
+
+  def read(offset: Int, size: Int): (ByteBuffer, Int) = {
+    val channel = fl.getChannel.position(offset)
+    read(channel, size)
+  }
+
+  def read(size: Int): (ByteBuffer, Int) = {
+    val channel = fl.getChannel
+    read(channel, size)
+  }
+
+  def read(channel: FileChannel, size: Int): (ByteBuffer, Int) = {
+    val data = ByteBuffer.allocate(size)
+    val bytesRead = channel.read(data)
+    data.flip()
+    (data, bytesRead)
+  }
+
+  def getPosition(): Long = fl.getChannel.position()
+
+  def readInt(): Option[Int] = readInt(fl.getChannel)
+
+  def readInt(pos: Int): Option[Int] = readInt(fl.getChannel.position(pos))
 
   def readInt(channel: FileChannel): Option[Int] = {
     val bb = ByteBuffer.allocate(4)
@@ -38,12 +68,28 @@ class FileManager(private val path: String) {
     }
   }
 
-  def writeAll(bytes: ByteBuffer) = {
-    val channel = fl.getChannel.position(0)
-    writeInt(channel, bytes.limit())
-    channel.write(bytes)
-    channel.force(true)
+  def write(bytes: ByteBuffer): Unit = {
+    val channel = fl.getChannel
+    write(channel, bytes)
   }
+
+  def write(pos: Int, bytes: ByteBuffer): Unit = {
+    val channel = fl.getChannel.position(pos)
+    write(channel, bytes)
+  }
+
+  private def write(channel: FileChannel, bytes: ByteBuffer): Unit = {
+    channel.write(bytes)
+  }
+
+  def writeAtStart(bytes: ByteBuffer) = {
+    val channel = fl.getChannel.position(0)
+    write(channel, bytes)
+  }
+
+  def flush(): Unit = fl.getChannel.force(true)
+
+  def writeInt(value: Int): Unit = writeInt(fl.getChannel, value)
 
   def writeInt(channel: FileChannel, value: Int): Unit = {
     val bb = toByteBuffer(value)
@@ -78,4 +124,15 @@ object FileManager {
   }
 
   def apply(path: String): FileManager = new FileManager(path)
+
+  def create(path: String, filename: String): Unit = {
+    val dir = new File(path)
+    if (!dir.exists()) {
+      dir.mkdirs()
+    }
+    val file = new File(path + "/" + file)
+    if (!file.exists()) {
+      file.createNewFile()
+    }
+  }
 }

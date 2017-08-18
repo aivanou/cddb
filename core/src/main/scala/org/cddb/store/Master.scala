@@ -8,6 +8,7 @@ import scala.util.hashing.MurmurHash3
 case class Range(start: Long, end: Long)
 
 class Master(distributor: Distributor, hashFunc: (String => Long)) extends Actor {
+
   val log = Logging(context.system, this)
 
   override def receive = {

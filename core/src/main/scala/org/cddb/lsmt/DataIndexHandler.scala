@@ -2,9 +2,12 @@ package org.cddb.lsmt
 
 import org.cddb.io.{Config, DiskBlock}
 
-import scala.annotation.tailrec
 import scala.collection.immutable
 
+/**
+  *
+  * @param config
+  */
 class DataIndexHandler(config: Config) {
 
   implicit def ord = new Ordering[Range] {
@@ -21,19 +24,19 @@ class DataIndexHandler(config: Config) {
 
   private val indexBlock = DiskBlock[DataIndex](config, DataIndex, config.dataIndex)
 
-  def readIndex(): immutable.TreeMap[Range, DiskBlock[SSTable]] = {
+  def readIndex(): immutable.TreeMap[Range, DiskBlock[DiskSSTable]] = {
     indexBlock.readFromDisk() match {
-      case None => immutable.TreeMap[Range, DiskBlock[SSTable]]()(ord)
+      case None => immutable.TreeMap[Range, DiskBlock[DiskSSTable]]()(ord)
       case Some(data) => parse(data)
     }
   }
 
-  def writeIndex(tree: immutable.TreeMap[Range, DiskBlock[SSTable]]): Unit = {
+  def writeIndex(tree: immutable.TreeMap[Range, DiskBlock[DiskSSTable]]): Unit = {
     val lst = tree.map {
-      case (range, block) => Metadata(range, block.getId())
+      case (range, block) => Metadata(range, block.getId)
     }
     val dataIndex = new DataIndex(lst.toList)
-    indexBlock.writeTodisk(dataIndex)
+    indexBlock.writeToDisk(dataIndex)
   }
 
   def destroy(): Unit = {
@@ -46,14 +49,13 @@ class DataIndexHandler(config: Config) {
     indexBlock.cleanAndClose()
   }
 
-  private def parse(dataIndex: DataIndex): immutable.TreeMap[Range, DiskBlock[SSTable]] = {
-    @tailrec
-    def process(dt: List[Metadata], mp: immutable.TreeMap[Range, DiskBlock[SSTable]]): immutable.TreeMap[Range, DiskBlock[SSTable]] =
+  private def parse(dataIndex: DataIndex): immutable.TreeMap[Range, DiskBlock[DiskSSTable]] = {
+    def process(dt: List[Metadata], mp: immutable.TreeMap[Range, DiskBlock[DiskSSTable]]): immutable.TreeMap[Range, DiskBlock[DiskSSTable]] =
       dt match {
-        case h :: t => process(t, mp + ((h.range, new DiskBlock(config, SSTable, h.blockId))))
+        case h :: t => mp
         case Nil => mp
       }
-    process(dataIndex.indices, immutable.TreeMap[Range, DiskBlock[SSTable]]()(ord))
+    process(dataIndex.indices, immutable.TreeMap[Range, DiskBlock[DiskSSTable]]()(ord))
   }
 
 }

@@ -14,8 +14,8 @@ public final class TableSerializer {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-  public interface IndexRecordOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:IndexRecord)
+  public interface PointerOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:Pointer)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -29,24 +29,30 @@ public final class TableSerializer {
         getKeyBytes();
 
     /**
-     * <code>int64 offset = 2;</code>
+     * <code>int32 offset = 2;</code>
      */
-    long getOffset();
+    int getOffset();
+
+    /**
+     * <code>int32 length = 3;</code>
+     */
+    int getLength();
   }
   /**
-   * Protobuf type {@code IndexRecord}
+   * Protobuf type {@code Pointer}
    */
-  public  static final class IndexRecord extends
+  public  static final class Pointer extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:IndexRecord)
-      IndexRecordOrBuilder {
-    // Use IndexRecord.newBuilder() to construct.
-    private IndexRecord(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:Pointer)
+      PointerOrBuilder {
+    // Use Pointer.newBuilder() to construct.
+    private Pointer(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private IndexRecord() {
+    private Pointer() {
       key_ = "";
-      offset_ = 0L;
+      offset_ = 0;
+      length_ = 0;
     }
 
     @java.lang.Override
@@ -54,7 +60,7 @@ public final class TableSerializer {
     getUnknownFields() {
       return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
-    private IndexRecord(
+    private Pointer(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -82,7 +88,12 @@ public final class TableSerializer {
             }
             case 16: {
 
-              offset_ = input.readInt64();
+              offset_ = input.readInt32();
+              break;
+            }
+            case 24: {
+
+              length_ = input.readInt32();
               break;
             }
           }
@@ -98,14 +109,14 @@ public final class TableSerializer {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.cddb.lsmt.internal.TableSerializer.internal_static_IndexRecord_descriptor;
+      return org.cddb.lsmt.internal.TableSerializer.internal_static_Pointer_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.cddb.lsmt.internal.TableSerializer.internal_static_IndexRecord_fieldAccessorTable
+      return org.cddb.lsmt.internal.TableSerializer.internal_static_Pointer_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.cddb.lsmt.internal.TableSerializer.IndexRecord.class, org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder.class);
+              org.cddb.lsmt.internal.TableSerializer.Pointer.class, org.cddb.lsmt.internal.TableSerializer.Pointer.Builder.class);
     }
 
     public static final int KEY_FIELD_NUMBER = 1;
@@ -143,12 +154,21 @@ public final class TableSerializer {
     }
 
     public static final int OFFSET_FIELD_NUMBER = 2;
-    private long offset_;
+    private int offset_;
     /**
-     * <code>int64 offset = 2;</code>
+     * <code>int32 offset = 2;</code>
      */
-    public long getOffset() {
+    public int getOffset() {
       return offset_;
+    }
+
+    public static final int LENGTH_FIELD_NUMBER = 3;
+    private int length_;
+    /**
+     * <code>int32 length = 3;</code>
+     */
+    public int getLength() {
+      return length_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -166,8 +186,11 @@ public final class TableSerializer {
       if (!getKeyBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, key_);
       }
-      if (offset_ != 0L) {
-        output.writeInt64(2, offset_);
+      if (offset_ != 0) {
+        output.writeInt32(2, offset_);
+      }
+      if (length_ != 0) {
+        output.writeInt32(3, length_);
       }
     }
 
@@ -179,9 +202,13 @@ public final class TableSerializer {
       if (!getKeyBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, key_);
       }
-      if (offset_ != 0L) {
+      if (offset_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, offset_);
+          .computeInt32Size(2, offset_);
+      }
+      if (length_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, length_);
       }
       memoizedSize = size;
       return size;
@@ -193,16 +220,18 @@ public final class TableSerializer {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.cddb.lsmt.internal.TableSerializer.IndexRecord)) {
+      if (!(obj instanceof org.cddb.lsmt.internal.TableSerializer.Pointer)) {
         return super.equals(obj);
       }
-      org.cddb.lsmt.internal.TableSerializer.IndexRecord other = (org.cddb.lsmt.internal.TableSerializer.IndexRecord) obj;
+      org.cddb.lsmt.internal.TableSerializer.Pointer other = (org.cddb.lsmt.internal.TableSerializer.Pointer) obj;
 
       boolean result = true;
       result = result && getKey()
           .equals(other.getKey());
       result = result && (getOffset()
           == other.getOffset());
+      result = result && (getLength()
+          == other.getLength());
       return result;
     }
 
@@ -216,76 +245,77 @@ public final class TableSerializer {
       hash = (37 * hash) + KEY_FIELD_NUMBER;
       hash = (53 * hash) + getKey().hashCode();
       hash = (37 * hash) + OFFSET_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getOffset());
+      hash = (53 * hash) + getOffset();
+      hash = (37 * hash) + LENGTH_FIELD_NUMBER;
+      hash = (53 * hash) + getLength();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(byte[] data)
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(java.io.InputStream input)
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseDelimitedFrom(java.io.InputStream input)
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseDelimitedFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -297,7 +327,7 @@ public final class TableSerializer {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.cddb.lsmt.internal.TableSerializer.IndexRecord prototype) {
+    public static Builder newBuilder(org.cddb.lsmt.internal.TableSerializer.Pointer prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -312,25 +342,25 @@ public final class TableSerializer {
       return builder;
     }
     /**
-     * Protobuf type {@code IndexRecord}
+     * Protobuf type {@code Pointer}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:IndexRecord)
-        org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder {
+        // @@protoc_insertion_point(builder_implements:Pointer)
+        org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cddb.lsmt.internal.TableSerializer.internal_static_IndexRecord_descriptor;
+        return org.cddb.lsmt.internal.TableSerializer.internal_static_Pointer_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cddb.lsmt.internal.TableSerializer.internal_static_IndexRecord_fieldAccessorTable
+        return org.cddb.lsmt.internal.TableSerializer.internal_static_Pointer_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.cddb.lsmt.internal.TableSerializer.IndexRecord.class, org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder.class);
+                org.cddb.lsmt.internal.TableSerializer.Pointer.class, org.cddb.lsmt.internal.TableSerializer.Pointer.Builder.class);
       }
 
-      // Construct using org.cddb.lsmt.internal.TableSerializer.IndexRecord.newBuilder()
+      // Construct using org.cddb.lsmt.internal.TableSerializer.Pointer.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -349,32 +379,35 @@ public final class TableSerializer {
         super.clear();
         key_ = "";
 
-        offset_ = 0L;
+        offset_ = 0;
+
+        length_ = 0;
 
         return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.cddb.lsmt.internal.TableSerializer.internal_static_IndexRecord_descriptor;
+        return org.cddb.lsmt.internal.TableSerializer.internal_static_Pointer_descriptor;
       }
 
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecord getDefaultInstanceForType() {
-        return org.cddb.lsmt.internal.TableSerializer.IndexRecord.getDefaultInstance();
+      public org.cddb.lsmt.internal.TableSerializer.Pointer getDefaultInstanceForType() {
+        return org.cddb.lsmt.internal.TableSerializer.Pointer.getDefaultInstance();
       }
 
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecord build() {
-        org.cddb.lsmt.internal.TableSerializer.IndexRecord result = buildPartial();
+      public org.cddb.lsmt.internal.TableSerializer.Pointer build() {
+        org.cddb.lsmt.internal.TableSerializer.Pointer result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecord buildPartial() {
-        org.cddb.lsmt.internal.TableSerializer.IndexRecord result = new org.cddb.lsmt.internal.TableSerializer.IndexRecord(this);
+      public org.cddb.lsmt.internal.TableSerializer.Pointer buildPartial() {
+        org.cddb.lsmt.internal.TableSerializer.Pointer result = new org.cddb.lsmt.internal.TableSerializer.Pointer(this);
         result.key_ = key_;
         result.offset_ = offset_;
+        result.length_ = length_;
         onBuilt();
         return result;
       }
@@ -406,22 +439,25 @@ public final class TableSerializer {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.cddb.lsmt.internal.TableSerializer.IndexRecord) {
-          return mergeFrom((org.cddb.lsmt.internal.TableSerializer.IndexRecord)other);
+        if (other instanceof org.cddb.lsmt.internal.TableSerializer.Pointer) {
+          return mergeFrom((org.cddb.lsmt.internal.TableSerializer.Pointer)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.cddb.lsmt.internal.TableSerializer.IndexRecord other) {
-        if (other == org.cddb.lsmt.internal.TableSerializer.IndexRecord.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.cddb.lsmt.internal.TableSerializer.Pointer other) {
+        if (other == org.cddb.lsmt.internal.TableSerializer.Pointer.getDefaultInstance()) return this;
         if (!other.getKey().isEmpty()) {
           key_ = other.key_;
           onChanged();
         }
-        if (other.getOffset() != 0L) {
+        if (other.getOffset() != 0) {
           setOffset(other.getOffset());
+        }
+        if (other.getLength() != 0) {
+          setLength(other.getLength());
         }
         onChanged();
         return this;
@@ -435,11 +471,11 @@ public final class TableSerializer {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.cddb.lsmt.internal.TableSerializer.IndexRecord parsedMessage = null;
+        org.cddb.lsmt.internal.TableSerializer.Pointer parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.cddb.lsmt.internal.TableSerializer.IndexRecord) e.getUnfinishedMessage();
+          parsedMessage = (org.cddb.lsmt.internal.TableSerializer.Pointer) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -518,28 +554,54 @@ public final class TableSerializer {
         return this;
       }
 
-      private long offset_ ;
+      private int offset_ ;
       /**
-       * <code>int64 offset = 2;</code>
+       * <code>int32 offset = 2;</code>
        */
-      public long getOffset() {
+      public int getOffset() {
         return offset_;
       }
       /**
-       * <code>int64 offset = 2;</code>
+       * <code>int32 offset = 2;</code>
        */
-      public Builder setOffset(long value) {
+      public Builder setOffset(int value) {
         
         offset_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 offset = 2;</code>
+       * <code>int32 offset = 2;</code>
        */
       public Builder clearOffset() {
         
-        offset_ = 0L;
+        offset_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int length_ ;
+      /**
+       * <code>int32 length = 3;</code>
+       */
+      public int getLength() {
+        return length_;
+      }
+      /**
+       * <code>int32 length = 3;</code>
+       */
+      public Builder setLength(int value) {
+        
+        length_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 length = 3;</code>
+       */
+      public Builder clearLength() {
+        
+        length_ = 0;
         onChanged();
         return this;
       }
@@ -554,106 +616,84 @@ public final class TableSerializer {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:IndexRecord)
+      // @@protoc_insertion_point(builder_scope:Pointer)
     }
 
-    // @@protoc_insertion_point(class_scope:IndexRecord)
-    private static final org.cddb.lsmt.internal.TableSerializer.IndexRecord DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:Pointer)
+    private static final org.cddb.lsmt.internal.TableSerializer.Pointer DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.cddb.lsmt.internal.TableSerializer.IndexRecord();
+      DEFAULT_INSTANCE = new org.cddb.lsmt.internal.TableSerializer.Pointer();
     }
 
-    public static org.cddb.lsmt.internal.TableSerializer.IndexRecord getDefaultInstance() {
+    public static org.cddb.lsmt.internal.TableSerializer.Pointer getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<IndexRecord>
-        PARSER = new com.google.protobuf.AbstractParser<IndexRecord>() {
-      public IndexRecord parsePartialFrom(
+    private static final com.google.protobuf.Parser<Pointer>
+        PARSER = new com.google.protobuf.AbstractParser<Pointer>() {
+      public Pointer parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new IndexRecord(input, extensionRegistry);
+          return new Pointer(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<IndexRecord> parser() {
+    public static com.google.protobuf.Parser<Pointer> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<IndexRecord> getParserForType() {
+    public com.google.protobuf.Parser<Pointer> getParserForType() {
       return PARSER;
     }
 
-    public org.cddb.lsmt.internal.TableSerializer.IndexRecord getDefaultInstanceForType() {
+    public org.cddb.lsmt.internal.TableSerializer.Pointer getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
-  public interface IndexOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:Index)
+  public interface SSTableIndexOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:SSTableIndex)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string minKey = 1;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    java.lang.String getMinKey();
-    /**
-     * <code>string minKey = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getMinKeyBytes();
-
-    /**
-     * <code>string maxKey = 2;</code>
-     */
-    java.lang.String getMaxKey();
-    /**
-     * <code>string maxKey = 2;</code>
-     */
-    com.google.protobuf.ByteString
-        getMaxKeyBytes();
-
-    /**
-     * <code>repeated .IndexRecord records = 3;</code>
-     */
-    java.util.List<org.cddb.lsmt.internal.TableSerializer.IndexRecord> 
+    java.util.List<org.cddb.lsmt.internal.TableSerializer.Pointer> 
         getRecordsList();
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    org.cddb.lsmt.internal.TableSerializer.IndexRecord getRecords(int index);
+    org.cddb.lsmt.internal.TableSerializer.Pointer getRecords(int index);
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
     int getRecordsCount();
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    java.util.List<? extends org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder> 
+    java.util.List<? extends org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder> 
         getRecordsOrBuilderList();
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder getRecordsOrBuilder(
+    org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder getRecordsOrBuilder(
         int index);
   }
   /**
-   * Protobuf type {@code Index}
+   * Protobuf type {@code SSTableIndex}
    */
-  public  static final class Index extends
+  public  static final class SSTableIndex extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:Index)
-      IndexOrBuilder {
-    // Use Index.newBuilder() to construct.
-    private Index(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:SSTableIndex)
+      SSTableIndexOrBuilder {
+    // Use SSTableIndex.newBuilder() to construct.
+    private SSTableIndex(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private Index() {
-      minKey_ = "";
-      maxKey_ = "";
+    private SSTableIndex() {
       records_ = java.util.Collections.emptyList();
     }
 
@@ -662,7 +702,7 @@ public final class TableSerializer {
     getUnknownFields() {
       return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
-    private Index(
+    private SSTableIndex(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -682,25 +722,13 @@ public final class TableSerializer {
               }
               break;
             }
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              minKey_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              maxKey_ = s;
-              break;
-            }
             case 26: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                records_ = new java.util.ArrayList<org.cddb.lsmt.internal.TableSerializer.IndexRecord>();
-                mutable_bitField0_ |= 0x00000004;
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                records_ = new java.util.ArrayList<org.cddb.lsmt.internal.TableSerializer.Pointer>();
+                mutable_bitField0_ |= 0x00000001;
               }
               records_.add(
-                  input.readMessage(org.cddb.lsmt.internal.TableSerializer.IndexRecord.parser(), extensionRegistry));
+                  input.readMessage(org.cddb.lsmt.internal.TableSerializer.Pointer.parser(), extensionRegistry));
               break;
             }
           }
@@ -711,7 +739,7 @@ public final class TableSerializer {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           records_ = java.util.Collections.unmodifiableList(records_);
         }
         makeExtensionsImmutable();
@@ -719,116 +747,47 @@ public final class TableSerializer {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.cddb.lsmt.internal.TableSerializer.internal_static_Index_descriptor;
+      return org.cddb.lsmt.internal.TableSerializer.internal_static_SSTableIndex_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.cddb.lsmt.internal.TableSerializer.internal_static_Index_fieldAccessorTable
+      return org.cddb.lsmt.internal.TableSerializer.internal_static_SSTableIndex_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.cddb.lsmt.internal.TableSerializer.Index.class, org.cddb.lsmt.internal.TableSerializer.Index.Builder.class);
-    }
-
-    private int bitField0_;
-    public static final int MINKEY_FIELD_NUMBER = 1;
-    private volatile java.lang.Object minKey_;
-    /**
-     * <code>string minKey = 1;</code>
-     */
-    public java.lang.String getMinKey() {
-      java.lang.Object ref = minKey_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        minKey_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string minKey = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getMinKeyBytes() {
-      java.lang.Object ref = minKey_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        minKey_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int MAXKEY_FIELD_NUMBER = 2;
-    private volatile java.lang.Object maxKey_;
-    /**
-     * <code>string maxKey = 2;</code>
-     */
-    public java.lang.String getMaxKey() {
-      java.lang.Object ref = maxKey_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        maxKey_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string maxKey = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getMaxKeyBytes() {
-      java.lang.Object ref = maxKey_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        maxKey_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+              org.cddb.lsmt.internal.TableSerializer.SSTableIndex.class, org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder.class);
     }
 
     public static final int RECORDS_FIELD_NUMBER = 3;
-    private java.util.List<org.cddb.lsmt.internal.TableSerializer.IndexRecord> records_;
+    private java.util.List<org.cddb.lsmt.internal.TableSerializer.Pointer> records_;
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    public java.util.List<org.cddb.lsmt.internal.TableSerializer.IndexRecord> getRecordsList() {
+    public java.util.List<org.cddb.lsmt.internal.TableSerializer.Pointer> getRecordsList() {
       return records_;
     }
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    public java.util.List<? extends org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder> 
+    public java.util.List<? extends org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder> 
         getRecordsOrBuilderList() {
       return records_;
     }
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
     public int getRecordsCount() {
       return records_.size();
     }
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    public org.cddb.lsmt.internal.TableSerializer.IndexRecord getRecords(int index) {
+    public org.cddb.lsmt.internal.TableSerializer.Pointer getRecords(int index) {
       return records_.get(index);
     }
     /**
-     * <code>repeated .IndexRecord records = 3;</code>
+     * <code>repeated .Pointer records = 3;</code>
      */
-    public org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder getRecordsOrBuilder(
+    public org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder getRecordsOrBuilder(
         int index) {
       return records_.get(index);
     }
@@ -845,12 +804,6 @@ public final class TableSerializer {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getMinKeyBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, minKey_);
-      }
-      if (!getMaxKeyBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, maxKey_);
-      }
       for (int i = 0; i < records_.size(); i++) {
         output.writeMessage(3, records_.get(i));
       }
@@ -861,12 +814,6 @@ public final class TableSerializer {
       if (size != -1) return size;
 
       size = 0;
-      if (!getMinKeyBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, minKey_);
-      }
-      if (!getMaxKeyBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, maxKey_);
-      }
       for (int i = 0; i < records_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, records_.get(i));
@@ -881,16 +828,12 @@ public final class TableSerializer {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.cddb.lsmt.internal.TableSerializer.Index)) {
+      if (!(obj instanceof org.cddb.lsmt.internal.TableSerializer.SSTableIndex)) {
         return super.equals(obj);
       }
-      org.cddb.lsmt.internal.TableSerializer.Index other = (org.cddb.lsmt.internal.TableSerializer.Index) obj;
+      org.cddb.lsmt.internal.TableSerializer.SSTableIndex other = (org.cddb.lsmt.internal.TableSerializer.SSTableIndex) obj;
 
       boolean result = true;
-      result = result && getMinKey()
-          .equals(other.getMinKey());
-      result = result && getMaxKey()
-          .equals(other.getMaxKey());
       result = result && getRecordsList()
           .equals(other.getRecordsList());
       return result;
@@ -903,10 +846,6 @@ public final class TableSerializer {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + MINKEY_FIELD_NUMBER;
-      hash = (53 * hash) + getMinKey().hashCode();
-      hash = (37 * hash) + MAXKEY_FIELD_NUMBER;
-      hash = (53 * hash) + getMaxKey().hashCode();
       if (getRecordsCount() > 0) {
         hash = (37 * hash) + RECORDS_FIELD_NUMBER;
         hash = (53 * hash) + getRecordsList().hashCode();
@@ -916,69 +855,69 @@ public final class TableSerializer {
       return hash;
     }
 
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(byte[] data)
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(java.io.InputStream input)
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseDelimitedFrom(java.io.InputStream input)
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseDelimitedFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.cddb.lsmt.internal.TableSerializer.Index parseFrom(
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -990,7 +929,7 @@ public final class TableSerializer {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.cddb.lsmt.internal.TableSerializer.Index prototype) {
+    public static Builder newBuilder(org.cddb.lsmt.internal.TableSerializer.SSTableIndex prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -1005,25 +944,25 @@ public final class TableSerializer {
       return builder;
     }
     /**
-     * Protobuf type {@code Index}
+     * Protobuf type {@code SSTableIndex}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:Index)
-        org.cddb.lsmt.internal.TableSerializer.IndexOrBuilder {
+        // @@protoc_insertion_point(builder_implements:SSTableIndex)
+        org.cddb.lsmt.internal.TableSerializer.SSTableIndexOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cddb.lsmt.internal.TableSerializer.internal_static_Index_descriptor;
+        return org.cddb.lsmt.internal.TableSerializer.internal_static_SSTableIndex_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cddb.lsmt.internal.TableSerializer.internal_static_Index_fieldAccessorTable
+        return org.cddb.lsmt.internal.TableSerializer.internal_static_SSTableIndex_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.cddb.lsmt.internal.TableSerializer.Index.class, org.cddb.lsmt.internal.TableSerializer.Index.Builder.class);
+                org.cddb.lsmt.internal.TableSerializer.SSTableIndex.class, org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder.class);
       }
 
-      // Construct using org.cddb.lsmt.internal.TableSerializer.Index.newBuilder()
+      // Construct using org.cddb.lsmt.internal.TableSerializer.SSTableIndex.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1041,13 +980,9 @@ public final class TableSerializer {
       }
       public Builder clear() {
         super.clear();
-        minKey_ = "";
-
-        maxKey_ = "";
-
         if (recordsBuilder_ == null) {
           records_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
           recordsBuilder_.clear();
         }
@@ -1056,37 +991,33 @@ public final class TableSerializer {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.cddb.lsmt.internal.TableSerializer.internal_static_Index_descriptor;
+        return org.cddb.lsmt.internal.TableSerializer.internal_static_SSTableIndex_descriptor;
       }
 
-      public org.cddb.lsmt.internal.TableSerializer.Index getDefaultInstanceForType() {
-        return org.cddb.lsmt.internal.TableSerializer.Index.getDefaultInstance();
+      public org.cddb.lsmt.internal.TableSerializer.SSTableIndex getDefaultInstanceForType() {
+        return org.cddb.lsmt.internal.TableSerializer.SSTableIndex.getDefaultInstance();
       }
 
-      public org.cddb.lsmt.internal.TableSerializer.Index build() {
-        org.cddb.lsmt.internal.TableSerializer.Index result = buildPartial();
+      public org.cddb.lsmt.internal.TableSerializer.SSTableIndex build() {
+        org.cddb.lsmt.internal.TableSerializer.SSTableIndex result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.cddb.lsmt.internal.TableSerializer.Index buildPartial() {
-        org.cddb.lsmt.internal.TableSerializer.Index result = new org.cddb.lsmt.internal.TableSerializer.Index(this);
+      public org.cddb.lsmt.internal.TableSerializer.SSTableIndex buildPartial() {
+        org.cddb.lsmt.internal.TableSerializer.SSTableIndex result = new org.cddb.lsmt.internal.TableSerializer.SSTableIndex(this);
         int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.minKey_ = minKey_;
-        result.maxKey_ = maxKey_;
         if (recordsBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
             records_ = java.util.Collections.unmodifiableList(records_);
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000001);
           }
           result.records_ = records_;
         } else {
           result.records_ = recordsBuilder_.build();
         }
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -1118,29 +1049,21 @@ public final class TableSerializer {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.cddb.lsmt.internal.TableSerializer.Index) {
-          return mergeFrom((org.cddb.lsmt.internal.TableSerializer.Index)other);
+        if (other instanceof org.cddb.lsmt.internal.TableSerializer.SSTableIndex) {
+          return mergeFrom((org.cddb.lsmt.internal.TableSerializer.SSTableIndex)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.cddb.lsmt.internal.TableSerializer.Index other) {
-        if (other == org.cddb.lsmt.internal.TableSerializer.Index.getDefaultInstance()) return this;
-        if (!other.getMinKey().isEmpty()) {
-          minKey_ = other.minKey_;
-          onChanged();
-        }
-        if (!other.getMaxKey().isEmpty()) {
-          maxKey_ = other.maxKey_;
-          onChanged();
-        }
+      public Builder mergeFrom(org.cddb.lsmt.internal.TableSerializer.SSTableIndex other) {
+        if (other == org.cddb.lsmt.internal.TableSerializer.SSTableIndex.getDefaultInstance()) return this;
         if (recordsBuilder_ == null) {
           if (!other.records_.isEmpty()) {
             if (records_.isEmpty()) {
               records_ = other.records_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000001);
             } else {
               ensureRecordsIsMutable();
               records_.addAll(other.records_);
@@ -1153,7 +1076,7 @@ public final class TableSerializer {
               recordsBuilder_.dispose();
               recordsBuilder_ = null;
               records_ = other.records_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000001);
               recordsBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getRecordsFieldBuilder() : null;
@@ -1174,11 +1097,11 @@ public final class TableSerializer {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.cddb.lsmt.internal.TableSerializer.Index parsedMessage = null;
+        org.cddb.lsmt.internal.TableSerializer.SSTableIndex parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.cddb.lsmt.internal.TableSerializer.Index) e.getUnfinishedMessage();
+          parsedMessage = (org.cddb.lsmt.internal.TableSerializer.SSTableIndex) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1189,160 +1112,22 @@ public final class TableSerializer {
       }
       private int bitField0_;
 
-      private java.lang.Object minKey_ = "";
-      /**
-       * <code>string minKey = 1;</code>
-       */
-      public java.lang.String getMinKey() {
-        java.lang.Object ref = minKey_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          minKey_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string minKey = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getMinKeyBytes() {
-        java.lang.Object ref = minKey_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          minKey_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string minKey = 1;</code>
-       */
-      public Builder setMinKey(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        minKey_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string minKey = 1;</code>
-       */
-      public Builder clearMinKey() {
-        
-        minKey_ = getDefaultInstance().getMinKey();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string minKey = 1;</code>
-       */
-      public Builder setMinKeyBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        minKey_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object maxKey_ = "";
-      /**
-       * <code>string maxKey = 2;</code>
-       */
-      public java.lang.String getMaxKey() {
-        java.lang.Object ref = maxKey_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          maxKey_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string maxKey = 2;</code>
-       */
-      public com.google.protobuf.ByteString
-          getMaxKeyBytes() {
-        java.lang.Object ref = maxKey_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          maxKey_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string maxKey = 2;</code>
-       */
-      public Builder setMaxKey(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        maxKey_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string maxKey = 2;</code>
-       */
-      public Builder clearMaxKey() {
-        
-        maxKey_ = getDefaultInstance().getMaxKey();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string maxKey = 2;</code>
-       */
-      public Builder setMaxKeyBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        maxKey_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.util.List<org.cddb.lsmt.internal.TableSerializer.IndexRecord> records_ =
+      private java.util.List<org.cddb.lsmt.internal.TableSerializer.Pointer> records_ =
         java.util.Collections.emptyList();
       private void ensureRecordsIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-          records_ = new java.util.ArrayList<org.cddb.lsmt.internal.TableSerializer.IndexRecord>(records_);
-          bitField0_ |= 0x00000004;
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          records_ = new java.util.ArrayList<org.cddb.lsmt.internal.TableSerializer.Pointer>(records_);
+          bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.cddb.lsmt.internal.TableSerializer.IndexRecord, org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder, org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder> recordsBuilder_;
+          org.cddb.lsmt.internal.TableSerializer.Pointer, org.cddb.lsmt.internal.TableSerializer.Pointer.Builder, org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder> recordsBuilder_;
 
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public java.util.List<org.cddb.lsmt.internal.TableSerializer.IndexRecord> getRecordsList() {
+      public java.util.List<org.cddb.lsmt.internal.TableSerializer.Pointer> getRecordsList() {
         if (recordsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(records_);
         } else {
@@ -1350,7 +1135,7 @@ public final class TableSerializer {
         }
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public int getRecordsCount() {
         if (recordsBuilder_ == null) {
@@ -1360,9 +1145,9 @@ public final class TableSerializer {
         }
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecord getRecords(int index) {
+      public org.cddb.lsmt.internal.TableSerializer.Pointer getRecords(int index) {
         if (recordsBuilder_ == null) {
           return records_.get(index);
         } else {
@@ -1370,10 +1155,10 @@ public final class TableSerializer {
         }
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder setRecords(
-          int index, org.cddb.lsmt.internal.TableSerializer.IndexRecord value) {
+          int index, org.cddb.lsmt.internal.TableSerializer.Pointer value) {
         if (recordsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1387,10 +1172,10 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder setRecords(
-          int index, org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder builderForValue) {
+          int index, org.cddb.lsmt.internal.TableSerializer.Pointer.Builder builderForValue) {
         if (recordsBuilder_ == null) {
           ensureRecordsIsMutable();
           records_.set(index, builderForValue.build());
@@ -1401,9 +1186,9 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public Builder addRecords(org.cddb.lsmt.internal.TableSerializer.IndexRecord value) {
+      public Builder addRecords(org.cddb.lsmt.internal.TableSerializer.Pointer value) {
         if (recordsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1417,10 +1202,10 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder addRecords(
-          int index, org.cddb.lsmt.internal.TableSerializer.IndexRecord value) {
+          int index, org.cddb.lsmt.internal.TableSerializer.Pointer value) {
         if (recordsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1434,10 +1219,10 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder addRecords(
-          org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder builderForValue) {
+          org.cddb.lsmt.internal.TableSerializer.Pointer.Builder builderForValue) {
         if (recordsBuilder_ == null) {
           ensureRecordsIsMutable();
           records_.add(builderForValue.build());
@@ -1448,10 +1233,10 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder addRecords(
-          int index, org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder builderForValue) {
+          int index, org.cddb.lsmt.internal.TableSerializer.Pointer.Builder builderForValue) {
         if (recordsBuilder_ == null) {
           ensureRecordsIsMutable();
           records_.add(index, builderForValue.build());
@@ -1462,10 +1247,10 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder addAllRecords(
-          java.lang.Iterable<? extends org.cddb.lsmt.internal.TableSerializer.IndexRecord> values) {
+          java.lang.Iterable<? extends org.cddb.lsmt.internal.TableSerializer.Pointer> values) {
         if (recordsBuilder_ == null) {
           ensureRecordsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -1477,12 +1262,12 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder clearRecords() {
         if (recordsBuilder_ == null) {
           records_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
           recordsBuilder_.clear();
@@ -1490,7 +1275,7 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
       public Builder removeRecords(int index) {
         if (recordsBuilder_ == null) {
@@ -1503,16 +1288,16 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder getRecordsBuilder(
+      public org.cddb.lsmt.internal.TableSerializer.Pointer.Builder getRecordsBuilder(
           int index) {
         return getRecordsFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder getRecordsOrBuilder(
+      public org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder getRecordsOrBuilder(
           int index) {
         if (recordsBuilder_ == null) {
           return records_.get(index);  } else {
@@ -1520,9 +1305,9 @@ public final class TableSerializer {
         }
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public java.util.List<? extends org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder> 
+      public java.util.List<? extends org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder> 
            getRecordsOrBuilderList() {
         if (recordsBuilder_ != null) {
           return recordsBuilder_.getMessageOrBuilderList();
@@ -1531,35 +1316,35 @@ public final class TableSerializer {
         }
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder addRecordsBuilder() {
+      public org.cddb.lsmt.internal.TableSerializer.Pointer.Builder addRecordsBuilder() {
         return getRecordsFieldBuilder().addBuilder(
-            org.cddb.lsmt.internal.TableSerializer.IndexRecord.getDefaultInstance());
+            org.cddb.lsmt.internal.TableSerializer.Pointer.getDefaultInstance());
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder addRecordsBuilder(
+      public org.cddb.lsmt.internal.TableSerializer.Pointer.Builder addRecordsBuilder(
           int index) {
         return getRecordsFieldBuilder().addBuilder(
-            index, org.cddb.lsmt.internal.TableSerializer.IndexRecord.getDefaultInstance());
+            index, org.cddb.lsmt.internal.TableSerializer.Pointer.getDefaultInstance());
       }
       /**
-       * <code>repeated .IndexRecord records = 3;</code>
+       * <code>repeated .Pointer records = 3;</code>
        */
-      public java.util.List<org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder> 
+      public java.util.List<org.cddb.lsmt.internal.TableSerializer.Pointer.Builder> 
            getRecordsBuilderList() {
         return getRecordsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.cddb.lsmt.internal.TableSerializer.IndexRecord, org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder, org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder> 
+          org.cddb.lsmt.internal.TableSerializer.Pointer, org.cddb.lsmt.internal.TableSerializer.Pointer.Builder, org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder> 
           getRecordsFieldBuilder() {
         if (recordsBuilder_ == null) {
           recordsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.cddb.lsmt.internal.TableSerializer.IndexRecord, org.cddb.lsmt.internal.TableSerializer.IndexRecord.Builder, org.cddb.lsmt.internal.TableSerializer.IndexRecordOrBuilder>(
+              org.cddb.lsmt.internal.TableSerializer.Pointer, org.cddb.lsmt.internal.TableSerializer.Pointer.Builder, org.cddb.lsmt.internal.TableSerializer.PointerOrBuilder>(
                   records_,
-                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  ((bitField0_ & 0x00000001) == 0x00000001),
                   getParentForChildren(),
                   isClean());
           records_ = null;
@@ -1577,39 +1362,39 @@ public final class TableSerializer {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:Index)
+      // @@protoc_insertion_point(builder_scope:SSTableIndex)
     }
 
-    // @@protoc_insertion_point(class_scope:Index)
-    private static final org.cddb.lsmt.internal.TableSerializer.Index DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:SSTableIndex)
+    private static final org.cddb.lsmt.internal.TableSerializer.SSTableIndex DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.cddb.lsmt.internal.TableSerializer.Index();
+      DEFAULT_INSTANCE = new org.cddb.lsmt.internal.TableSerializer.SSTableIndex();
     }
 
-    public static org.cddb.lsmt.internal.TableSerializer.Index getDefaultInstance() {
+    public static org.cddb.lsmt.internal.TableSerializer.SSTableIndex getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<Index>
-        PARSER = new com.google.protobuf.AbstractParser<Index>() {
-      public Index parsePartialFrom(
+    private static final com.google.protobuf.Parser<SSTableIndex>
+        PARSER = new com.google.protobuf.AbstractParser<SSTableIndex>() {
+      public SSTableIndex parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new Index(input, extensionRegistry);
+          return new SSTableIndex(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<Index> parser() {
+    public static com.google.protobuf.Parser<SSTableIndex> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Index> getParserForType() {
+    public com.google.protobuf.Parser<SSTableIndex> getParserForType() {
       return PARSER;
     }
 
-    public org.cddb.lsmt.internal.TableSerializer.Index getDefaultInstanceForType() {
+    public org.cddb.lsmt.internal.TableSerializer.SSTableIndex getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2472,17 +2257,17 @@ public final class TableSerializer {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.Index index = 1;</code>
+     * <code>.SSTableIndex index = 1;</code>
      */
     boolean hasIndex();
     /**
-     * <code>.Index index = 1;</code>
+     * <code>.SSTableIndex index = 1;</code>
      */
-    org.cddb.lsmt.internal.TableSerializer.Index getIndex();
+    org.cddb.lsmt.internal.TableSerializer.SSTableIndex getIndex();
     /**
-     * <code>.Index index = 1;</code>
+     * <code>.SSTableIndex index = 1;</code>
      */
-    org.cddb.lsmt.internal.TableSerializer.IndexOrBuilder getIndexOrBuilder();
+    org.cddb.lsmt.internal.TableSerializer.SSTableIndexOrBuilder getIndexOrBuilder();
 
     /**
      * <code>repeated .Record records = 2;</code>
@@ -2549,11 +2334,11 @@ public final class TableSerializer {
               break;
             }
             case 10: {
-              org.cddb.lsmt.internal.TableSerializer.Index.Builder subBuilder = null;
+              org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder subBuilder = null;
               if (index_ != null) {
                 subBuilder = index_.toBuilder();
               }
-              index_ = input.readMessage(org.cddb.lsmt.internal.TableSerializer.Index.parser(), extensionRegistry);
+              index_ = input.readMessage(org.cddb.lsmt.internal.TableSerializer.SSTableIndex.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(index_);
                 index_ = subBuilder.buildPartial();
@@ -2598,23 +2383,23 @@ public final class TableSerializer {
 
     private int bitField0_;
     public static final int INDEX_FIELD_NUMBER = 1;
-    private org.cddb.lsmt.internal.TableSerializer.Index index_;
+    private org.cddb.lsmt.internal.TableSerializer.SSTableIndex index_;
     /**
-     * <code>.Index index = 1;</code>
+     * <code>.SSTableIndex index = 1;</code>
      */
     public boolean hasIndex() {
       return index_ != null;
     }
     /**
-     * <code>.Index index = 1;</code>
+     * <code>.SSTableIndex index = 1;</code>
      */
-    public org.cddb.lsmt.internal.TableSerializer.Index getIndex() {
-      return index_ == null ? org.cddb.lsmt.internal.TableSerializer.Index.getDefaultInstance() : index_;
+    public org.cddb.lsmt.internal.TableSerializer.SSTableIndex getIndex() {
+      return index_ == null ? org.cddb.lsmt.internal.TableSerializer.SSTableIndex.getDefaultInstance() : index_;
     }
     /**
-     * <code>.Index index = 1;</code>
+     * <code>.SSTableIndex index = 1;</code>
      */
-    public org.cddb.lsmt.internal.TableSerializer.IndexOrBuilder getIndexOrBuilder() {
+    public org.cddb.lsmt.internal.TableSerializer.SSTableIndexOrBuilder getIndexOrBuilder() {
       return getIndex();
     }
 
@@ -3005,29 +2790,29 @@ public final class TableSerializer {
       }
       private int bitField0_;
 
-      private org.cddb.lsmt.internal.TableSerializer.Index index_ = null;
+      private org.cddb.lsmt.internal.TableSerializer.SSTableIndex index_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.cddb.lsmt.internal.TableSerializer.Index, org.cddb.lsmt.internal.TableSerializer.Index.Builder, org.cddb.lsmt.internal.TableSerializer.IndexOrBuilder> indexBuilder_;
+          org.cddb.lsmt.internal.TableSerializer.SSTableIndex, org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder, org.cddb.lsmt.internal.TableSerializer.SSTableIndexOrBuilder> indexBuilder_;
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
       public boolean hasIndex() {
         return indexBuilder_ != null || index_ != null;
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.Index getIndex() {
+      public org.cddb.lsmt.internal.TableSerializer.SSTableIndex getIndex() {
         if (indexBuilder_ == null) {
-          return index_ == null ? org.cddb.lsmt.internal.TableSerializer.Index.getDefaultInstance() : index_;
+          return index_ == null ? org.cddb.lsmt.internal.TableSerializer.SSTableIndex.getDefaultInstance() : index_;
         } else {
           return indexBuilder_.getMessage();
         }
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
-      public Builder setIndex(org.cddb.lsmt.internal.TableSerializer.Index value) {
+      public Builder setIndex(org.cddb.lsmt.internal.TableSerializer.SSTableIndex value) {
         if (indexBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -3041,10 +2826,10 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
       public Builder setIndex(
-          org.cddb.lsmt.internal.TableSerializer.Index.Builder builderForValue) {
+          org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder builderForValue) {
         if (indexBuilder_ == null) {
           index_ = builderForValue.build();
           onChanged();
@@ -3055,13 +2840,13 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
-      public Builder mergeIndex(org.cddb.lsmt.internal.TableSerializer.Index value) {
+      public Builder mergeIndex(org.cddb.lsmt.internal.TableSerializer.SSTableIndex value) {
         if (indexBuilder_ == null) {
           if (index_ != null) {
             index_ =
-              org.cddb.lsmt.internal.TableSerializer.Index.newBuilder(index_).mergeFrom(value).buildPartial();
+              org.cddb.lsmt.internal.TableSerializer.SSTableIndex.newBuilder(index_).mergeFrom(value).buildPartial();
           } else {
             index_ = value;
           }
@@ -3073,7 +2858,7 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
       public Builder clearIndex() {
         if (indexBuilder_ == null) {
@@ -3087,33 +2872,33 @@ public final class TableSerializer {
         return this;
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.Index.Builder getIndexBuilder() {
+      public org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder getIndexBuilder() {
         
         onChanged();
         return getIndexFieldBuilder().getBuilder();
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
-      public org.cddb.lsmt.internal.TableSerializer.IndexOrBuilder getIndexOrBuilder() {
+      public org.cddb.lsmt.internal.TableSerializer.SSTableIndexOrBuilder getIndexOrBuilder() {
         if (indexBuilder_ != null) {
           return indexBuilder_.getMessageOrBuilder();
         } else {
           return index_ == null ?
-              org.cddb.lsmt.internal.TableSerializer.Index.getDefaultInstance() : index_;
+              org.cddb.lsmt.internal.TableSerializer.SSTableIndex.getDefaultInstance() : index_;
         }
       }
       /**
-       * <code>.Index index = 1;</code>
+       * <code>.SSTableIndex index = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.cddb.lsmt.internal.TableSerializer.Index, org.cddb.lsmt.internal.TableSerializer.Index.Builder, org.cddb.lsmt.internal.TableSerializer.IndexOrBuilder> 
+          org.cddb.lsmt.internal.TableSerializer.SSTableIndex, org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder, org.cddb.lsmt.internal.TableSerializer.SSTableIndexOrBuilder> 
           getIndexFieldBuilder() {
         if (indexBuilder_ == null) {
           indexBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              org.cddb.lsmt.internal.TableSerializer.Index, org.cddb.lsmt.internal.TableSerializer.Index.Builder, org.cddb.lsmt.internal.TableSerializer.IndexOrBuilder>(
+              org.cddb.lsmt.internal.TableSerializer.SSTableIndex, org.cddb.lsmt.internal.TableSerializer.SSTableIndex.Builder, org.cddb.lsmt.internal.TableSerializer.SSTableIndexOrBuilder>(
                   getIndex(),
                   getParentForChildren(),
                   isClean());
@@ -5009,15 +4794,15 @@ public final class TableSerializer {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_IndexRecord_descriptor;
+    internal_static_Pointer_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_IndexRecord_fieldAccessorTable;
+      internal_static_Pointer_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_Index_descriptor;
+    internal_static_SSTableIndex_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_Index_fieldAccessorTable;
+      internal_static_SSTableIndex_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_Record_descriptor;
   private static final 
@@ -5047,17 +4832,17 @@ public final class TableSerializer {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\013table.proto\"*\n\013IndexRecord\022\013\n\003key\030\001 \001(" +
-      "\t\022\016\n\006offset\030\002 \001(\003\"F\n\005Index\022\016\n\006minKey\030\001 \001" +
-      "(\t\022\016\n\006maxKey\030\002 \001(\t\022\035\n\007records\030\003 \003(\0132\014.In" +
-      "dexRecord\"G\n\006Record\022\013\n\003key\030\001 \001(\t\022\r\n\005valu" +
-      "e\030\002 \001(\t\022\016\n\006status\030\003 \001(\t\022\021\n\ttimestamp\030\004 \001" +
-      "(\003\":\n\007SSTable\022\025\n\005index\030\001 \001(\0132\006.Index\022\030\n\007" +
-      "records\030\002 \003(\0132\007.Record\"H\n\010Metadata\022\014\n\004fr" +
-      "om\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007blockId\030\003 \001(\t\022\021\n" +
-      "\ttimestamp\030\004 \001(\003\"\'\n\tDataIndex\022\032\n\007indices" +
-      "\030\001 \003(\0132\t.MetadataB)\n\026org.cddb.lsmt.inter",
-      "nalB\017TableSerializerb\006proto3"
+      "\n\013table.proto\"6\n\007Pointer\022\013\n\003key\030\001 \001(\t\022\016\n" +
+      "\006offset\030\002 \001(\005\022\016\n\006length\030\003 \001(\005\")\n\014SSTable" +
+      "Index\022\031\n\007records\030\003 \003(\0132\010.Pointer\"G\n\006Reco" +
+      "rd\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\016\n\006status" +
+      "\030\003 \001(\t\022\021\n\ttimestamp\030\004 \001(\003\"A\n\007SSTable\022\034\n\005" +
+      "index\030\001 \001(\0132\r.SSTableIndex\022\030\n\007records\030\002 " +
+      "\003(\0132\007.Record\"H\n\010Metadata\022\014\n\004from\030\001 \001(\t\022\n" +
+      "\n\002to\030\002 \001(\t\022\017\n\007blockId\030\003 \001(\t\022\021\n\ttimestamp" +
+      "\030\004 \001(\003\"\'\n\tDataIndex\022\032\n\007indices\030\001 \003(\0132\t.M" +
+      "etadataB)\n\026org.cddb.lsmt.internalB\017Table",
+      "Serializerb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -5071,18 +4856,18 @@ public final class TableSerializer {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_IndexRecord_descriptor =
+    internal_static_Pointer_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_IndexRecord_fieldAccessorTable = new
+    internal_static_Pointer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_IndexRecord_descriptor,
-        new java.lang.String[] { "Key", "Offset", });
-    internal_static_Index_descriptor =
+        internal_static_Pointer_descriptor,
+        new java.lang.String[] { "Key", "Offset", "Length", });
+    internal_static_SSTableIndex_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_Index_fieldAccessorTable = new
+    internal_static_SSTableIndex_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_Index_descriptor,
-        new java.lang.String[] { "MinKey", "MaxKey", "Records", });
+        internal_static_SSTableIndex_descriptor,
+        new java.lang.String[] { "Records", });
     internal_static_Record_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_Record_fieldAccessorTable = new
